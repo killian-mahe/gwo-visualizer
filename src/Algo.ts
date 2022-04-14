@@ -91,9 +91,15 @@ export class GWOAlgo extends Algo {
      */
     public updateChiefWolves(sol: Solution[]) {
 
-        sol = sol.sort((a, b) => {
-            return b.fitness - a.fitness;
-        })
+        if (sol.length && sol[0].problem.maximization) {
+            sol = sol.sort((a, b) => {
+                return b.fitness - a.fitness;
+            })
+        } else {
+            sol = sol.sort((a, b) => {
+                return a.fitness - b.fitness;
+            });
+        }
 
         if (!this.alpha || !this.beta || !this.delta) {
             this.alpha = sol[0].copy();
@@ -102,19 +108,41 @@ export class GWOAlgo extends Algo {
             return;
         }
 
-        for (let i = 0; i < sol.length; i++) {
-            if (sol[i].fitness < this.delta.fitness) break;
+        if (sol.length && sol[0].problem.maximization) {
 
-            if (sol[i].fitness > this.alpha?.fitness) {
-                this.delta = this.beta.copy();
-                this.beta = this.alpha.copy();
-                this.alpha = sol[i].copy();
-            } else if (sol[i].fitness > this.beta?.fitness) {
-                this.delta = this.beta.copy();
-                this.beta = sol[i].copy();
-            } else if (sol[i].fitness > this.delta?.fitness) {
-                this.delta = sol[i].copy();
+            for (let i = 0; i < sol.length; i++) {
+                if (sol[i].fitness < this.delta.fitness) break;
+
+                if (sol[i].fitness > this.alpha?.fitness) {
+                    this.delta = this.beta.copy();
+                    this.beta = this.alpha.copy();
+                    this.alpha = sol[i].copy();
+                } else if (sol[i].fitness > this.beta?.fitness) {
+                    this.delta = this.beta.copy();
+                    this.beta = sol[i].copy();
+                } else if (sol[i].fitness > this.delta?.fitness) {
+                    this.delta = sol[i].copy();
+                }
             }
+
+        } else {
+
+            for (let i = 0; i < sol.length; i++) {
+                if (sol[i].fitness > this.delta.fitness) break;
+
+                if (sol[i].fitness < this.alpha?.fitness) {
+                    this.delta = this.beta.copy();
+                    this.beta = this.alpha.copy();
+                    this.alpha = sol[i].copy();
+                } else if (sol[i].fitness < this.beta?.fitness) {
+                    this.delta = this.beta.copy();
+                    this.beta = sol[i].copy();
+                } else if (sol[i].fitness < this.delta?.fitness) {
+                    this.delta = sol[i].copy();
+                }
+            }
+
         }
+
     }
 }

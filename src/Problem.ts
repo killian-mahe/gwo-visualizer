@@ -6,6 +6,7 @@ export class Problem {
     dimension: number;
     xMin: number;
     xMax: number;
+    maximization: boolean;
 
     /**
      * Create a new problem.
@@ -13,12 +14,14 @@ export class Problem {
      * @param dimension The number of dimensions.
      * @param xMin The domain minimum value.
      * @param xMax The domain maximum value.
+     * @param maximization Is it a maximization problem ?
      */
-    constructor(name: string, dimension: number, xMin: number, xMax: number) {
+    constructor(name: string, dimension: number, xMin: number, xMax: number, maximization: boolean = true) {
         this.name = name;
         this.dimension = dimension;
         this.xMin = xMin;
         this.xMax = xMax;
+        this.maximization = maximization;
     }
 
     public evaluate(_sol: Solution): number {
@@ -31,8 +34,8 @@ export class Problem {
  * @extends Problem
  */
 export class DiscreetProblem extends Problem {
-    constructor(name: string, dimension: number, xMin: number, xMax: number) {
-        super(name, dimension, xMin, xMax);
+    constructor(name: string, dimension: number, xMin: number, xMax: number, maximization: boolean = true) {
+        super(name, dimension, xMin, xMax, maximization);
     }
 }
 
@@ -41,8 +44,8 @@ export class DiscreetProblem extends Problem {
  * @extends Problem
  */
 export class ContinuousProblem extends Problem {
-    constructor(name: string, dimension: number, xMin: number, xMax: number) {
-        super(name, dimension, xMin, xMax);
+    constructor(name: string, dimension: number, xMin: number, xMax: number, maximization: boolean = true) {
+        super(name, dimension, xMin, xMax, maximization);
     }
 }
 
@@ -55,9 +58,10 @@ export class AlpineProblem extends ContinuousProblem {
     /**
      * Create a new Alpine problem.
      * @param dimension The number of dimensions.
+     * @param maximization Is it a maximization problem ?
      */
-    constructor(dimension: number) {
-        super("Alpine Problem", dimension, 0, 10);
+    constructor(dimension: number, maximization: boolean = true) {
+        super("Alpine Problem", dimension, 0, 10, maximization);
     }
 
     /**
@@ -87,7 +91,7 @@ export class SphereProblem extends ContinuousProblem {
      * @param dimension The number of dimensions.
      */
     constructor(dimension: number) {
-        super("Sphere Problem", dimension, -5.12, 5.12);
+        super("Sphere Problem", dimension, -5.12, 5.12, false);
     }
 
     /**

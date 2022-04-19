@@ -3,7 +3,11 @@ import {Solution} from "./Problem";
 /**
  * Generic class for an optimization algorithm.
  */
-class Algo {}
+export class Algo {
+    popSize: number = 0;
+
+    public reset() {};
+}
 
 /**
  * The Grey Wolf Optimizer algorithm.
@@ -144,5 +148,16 @@ export class GWOAlgo extends Algo {
 
         }
 
+    }
+
+    /**
+     * Reset the algorithm.
+     */
+    public reset() {
+        this.t = 0;
+        this.alpha = null;
+        this.beta = null;
+        this.delta = null;
+        this.a = 2;
     }
 }

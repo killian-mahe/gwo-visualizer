@@ -1,12 +1,13 @@
 import p5 from 'p5';
 import './style.css';
-import {AlpineProblem, Problem, Solution, SphereProblem} from "./Problem";
+import {AckleyProblem, Alpine2Problem, AlpineProblem, Problem, Solution, SphereProblem} from "./Problem";
 import {GWOAlgo} from "./Algo";
 
 const SAMPLING = 100;
 
 let MAP_HEIGHT = Math.min(document.getElementById('map-container')!.offsetHeight, document.getElementById('map-container')!.offsetWidth);
 let MAP_WIDTH = MAP_HEIGHT;
+let frameRate = (document.getElementById('simulation-speed') as HTMLInputElement).valueAsNumber;
 
 enum SimulationState {
     notInitialized,
@@ -19,7 +20,7 @@ enum SimulationState {
 let CANVAS: p5.Renderer;
 
 const DIMENSION = 2;
-const MAX_ITER = 250;
+const MAX_ITER = 500;
 
 let problem: Problem = new AlpineProblem(DIMENSION);
 let solutions: Solution[] = [];
@@ -36,12 +37,20 @@ document.getElementById('control-button-start')!.addEventListener('click', () =>
     } else if (simulationState !== SimulationState.notInitialized) {
         simulationState = SimulationState.started;
     }
-})
+    document.getElementById('control-button-start')!.innerText = 'Start';
+});
+
+document.getElementById('control-button-pause')!.addEventListener('click', () => {
+    if (simulationState === SimulationState.started) {
+        simulationState = SimulationState.paused;
+        document.getElementById('control-button-start')!.innerText = 'Resume';
+    }
+});
 
 document.getElementById('wolves-number')!.addEventListener('change', (e) => {
     algo.popSize = (e.target as HTMLInputElement).valueAsNumber;
     init();
-})
+});
 
 /**
  * Problem heatmap building
@@ -56,6 +65,13 @@ let sketch = function (p: p5) {
         CANVAS = p.createCanvas(MAP_WIDTH, MAP_HEIGHT);
         CANVAS.parent("map-container");
 
+        document.getElementById('simulation-speed')!.addEventListener('change', (e) => {
+            frameRate = (e.target as HTMLInputElement).valueAsNumber;
+            p.frameRate(frameRate);
+        });
+
+        p.frameRate(frameRate);
+
         init();
 
         algo.updateParameters();
@@ -68,6 +84,7 @@ let sketch = function (p: p5) {
         p.resizeCanvas(MAP_WIDTH, MAP_HEIGHT, true);
         p.background(0);
         const range = (problem.xMax - problem.xMin);
+        console.log([minValue, maxValue])
 
         /**
          * Visualization of the function heatmap
@@ -105,6 +122,7 @@ let sketch = function (p: p5) {
             algo.updateChiefWolves(solutions);
 
             document.getElementById('best-solution-fitness')!.innerHTML = algo.alpha!.fitness.toString();
+            document.getElementById('a-value')!.innerHTML = (Math.round(algo.a * 100) / 100).toString();
 
             algo.t += 1; // Increment the number of iteration
         }
@@ -117,6 +135,11 @@ let sketch = function (p: p5) {
         for (let i = 0; i < algo.popSize; i++) {
             p.fill('white');
             p.circle(MAP_WIDTH * (solutions[i].x[0] - problem.xMin) / range, MAP_HEIGHT * (solutions[i].x[1] - problem.xMin)/ range, 7);
+        }
+
+        if (algo.alpha) {
+            p.fill('blue');
+            p.rect(MAP_WIDTH * (algo.alpha.x[0] - problem.xMin) / range - 5, MAP_HEIGHT * (algo.alpha.x[1] - problem.xMin)/ range - 5, 10, 10);
         }
     }
 }
@@ -162,6 +185,20 @@ function updateSettings() {
             if (!(problem instanceof SphereProblem))
             {
                 problem = new SphereProblem(DIMENSION);
+                init();
+            }
+            break;
+        case 'alpine2':
+            if (!(problem instanceof Alpine2Problem))
+            {
+                problem = new Alpine2Problem(DIMENSION);
+                init();
+            }
+            break;
+        case 'ackley':
+            if (!(problem instanceof AckleyProblem))
+            {
+                problem = new AckleyProblem(DIMENSION);
                 init();
             }
             break;

@@ -81,6 +81,36 @@ export class AlpineProblem extends ContinuousProblem {
 }
 
 /**
+ * The Alpine 2 optimization problem.
+ * @extends ContinuousProblem
+ */
+export class Alpine2Problem extends ContinuousProblem {
+
+    /**
+     * Create a new Alpine problem.
+     * @param dimension The number of dimensions.
+     */
+    constructor(dimension: number) {
+        super("Alpine 2 Problem", dimension, -10, 10, false);
+    }
+
+    /**
+     * Evaluate a solution and return the fitness associated.
+     * @param sol Solution to evaluate.
+     * @return Fitness of the solution
+     */
+    public evaluate(sol: Solution): number {
+        let value = 0;
+
+        for (let i = 0; i < this.dimension; i++) {
+            value += Math.abs(sol.x[i] * Math.sin(sol.x[i]) + 0.1 * sol.x[i]);
+        }
+
+        return value;
+    }
+}
+
+/**
  * The Sphere optimization problem.
  * @extends ContinuousProblem
  */
@@ -107,6 +137,42 @@ export class SphereProblem extends ContinuousProblem {
         }
 
         return value;
+    }
+}
+
+/**
+ * The Ackley optimization problem.
+ * @extends ContinuousProblem
+ */
+export class AckleyProblem extends ContinuousProblem {
+
+    /**
+     * Create a new Sphere problem.
+     * @param dimension The number of dimensions.
+     */
+    constructor(dimension: number) {
+        super("Ackley Problem", dimension, -32, 32, false);
+    }
+
+    /**
+     * Evaluate a solution and return the fitness associated.
+     * @param sol Solution to evaluate.
+     * @return Fitness of the solution
+     */
+    public evaluate(sol: Solution): number {
+        let value1 = 0;
+        let value2 = 0;
+
+        for (let i = 0; i < this.dimension; i++) {
+            value1 += Math.pow(sol.x[i], 2);
+        }
+
+        for (let i = 0; i < this.dimension; i++) {
+            value2 += Math.cos(2 * Math.PI * sol.x[i]);
+        }
+
+        return -20 * Math.exp(-0.2 * Math.sqrt(1/this.dimension * value1))
+                - Math.exp(1/this.dimension * value2) + 20 + Math.exp(1);
     }
 }
 

@@ -9,7 +9,7 @@
 > Initially created for a meta-heuristics course at UQAC, this web application allows to solve optimization problems using the GWO algorithm.
 > For two-dimensional problems, the application can also display live execution of the algorithm.
 
-### ✨ [Demo](https://gwo.shareyourproject.fr)
+### ✨ [Demo](https://www.gwo.shareyourproject.fr)
 
 ## Install
 

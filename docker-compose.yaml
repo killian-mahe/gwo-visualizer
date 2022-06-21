@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  web-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - shared:/code/dist:rw
+  
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - shared:/www:ro
+    depends_on:
+      - web-build
+
+volumes:
+  shared:
